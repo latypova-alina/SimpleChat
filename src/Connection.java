@@ -112,7 +112,6 @@ class Connection implements Runnable {
                     onlinesFrames.put(client_name, inface);
                     names.add(client_name);
                     depictOnlines();
-                    //inface.addName(names);
                     inface.clear();
                    // break;
                 } else {
@@ -135,7 +134,10 @@ class Connection implements Runnable {
                         chatter_inface.setMessage(message);
                         inface.clear();
                         break;
-                    } else {
+                    } else if (chatter.equals("")){
+                        inface.clear();
+                        break;
+                    } else if (!online(chatter)){
                         inface.changeLabelText("Нет такого чатера");
                         inface.clear();
                         break;
