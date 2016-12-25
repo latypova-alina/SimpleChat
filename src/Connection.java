@@ -2,6 +2,7 @@
  * Created by alina on 21.12.16.
  */
 import java.io.*;
+import java.lang.reflect.Array;
 import java.net.Socket;
 import java.util.*;
 
@@ -10,23 +11,23 @@ class Connection implements Runnable {
     Socket client;
     Thread thread;
     Server server;
-    ArrayList<String> names = new ArrayList<>();
+    ArrayList<String> names;
     ArrayList<Connection> connections;
     Map onlines;
     String client_name;
-    String answer;
     Map onlinesFrames;
     Interface chatter_inface = new Interface();
 
 
 
 
-    public Connection(Server server, Socket client, ArrayList<Connection> connections, Map onlines, Map onlinesFrames) throws IOException {
+    public Connection(Server server, Socket client, ArrayList<Connection> connections, Map onlines, Map onlinesFrames, ArrayList<String> names) throws IOException {
         this.client = client;
         this.server = server;
         this.connections = connections;
         this.onlines = onlines;
         this.onlinesFrames = onlinesFrames;
+        this.names = names;
 
 
         thread = new Thread(this);
@@ -88,69 +89,59 @@ class Connection implements Runnable {
         return null;
     }
 
+    public void depictOnlines(){
+        Interface inf;
+        Iterator iterator = onlinesFrames.entrySet().iterator();
+        while(iterator.hasNext()){
+            Map.Entry pair = (Map.Entry)iterator.next();
+            inf = (Interface) pair.getValue();
+            inf.addName(names);
+        }
+    }
+
     public void run() {
-        try {
-            Interface inface = new Interface();
-            inface.start_working();
-
-
-
-
-
-            OutputStream os = client.getOutputStream();
-            InputStream is = client.getInputStream();
-            PrintWriter out = new PrintWriter(os);
-            BufferedReader in = new BufferedReader(new InputStreamReader(is));
-            String line;
-            boolean authorized = false;
-
-            while(true) {
-                //out.print("> ");
-                //out.flush();
-                while(inface.hasInput()){
-                    line = inface.getCommand();
-                    if (line == null) break;
-                    StringTokenizer t = new StringTokenizer(line);
-                    if (!t.hasMoreTokens()) continue;
-                    String command = t.nextToken().toLowerCase();
-                    if (command.equals("имя")) {
-                        client_name = t.nextToken();
-                        if (!loginExist(client_name)) {
-                            inface.changeLabelText("OK");
-                            inface.authorized();
-                            onlines.put(client_name, client);
-                            onlinesFrames.put(client_name, inface);
-                            names.add(client_name);
-                            inface.clear();
-                            break;
-                        } else {
-                        //    out.print("Имя уже занято\n");
-                            inface.changeLabelText("Имя занято");
-                            inface.clear();
-                            break;
-                        }
-                    }else if (command.equals("связаться")) {
-                        String chatter = t.nextToken();
-                        if (online(chatter)) {
-                            String message = t.nextToken();
-                            client_name = findClientName(inface);
+        Interface inface = new Interface();
+        inface.start_working();
+        while(true) {
+            if ((client_name == null) && inface.userNameHasInput()) {
+                client_name = inface.getClientName();
+                if ((client_name == null)||(client_name.equals(""))) break;
+                if (!loginExist(client_name)) {
+                    inface.authorized();
+                    onlines.put(client_name, client);
+                    onlinesFrames.put(client_name, inface);
+                    names.add(client_name);
+                    depictOnlines();
+                    //inface.addName(names);
+                    inface.clear();
+                   // break;
+                } else {
+                    inface.changeLabelText("Имя занято");
+                    inface.clear();
+                   // break;
+                }
+            } else if (client_name != null) /*&& (inface.nameAndInput()))*/ {
+                while (inface.nameAndInput()) {
+                    String chatter = inface.getChatterName();
+                    if (online(chatter)) {
+                        String message = inface.getMessage();
+                        client_name = findClientName(inface);
+                        try {
                             chatter_inface = findChatterInterface(chatter);
-                            //out = new PrintWriter(findChatter(chatter));
-                            //out.print("Сообщение от: \n" + client_name + "\n" + message + "\n");
-                            chatter_inface.changeLabelText("Сообщение от: \n" + client_name + "\n" + message + "\n");
-                            inface.clear();
-                            break;
-                        } else {
-                            //out.print("Нет такого чатера \n");
-                            inface.changeLabelText("Нет такого чатера");
-                            inface.clear();
-                            break;
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
+                        chatter_inface.messageFrom(client_name);
+                        chatter_inface.setMessage(message);
+                        inface.clear();
+                        break;
+                    } else {
+                        inface.changeLabelText("Нет такого чатера");
+                        inface.clear();
+                        break;
                     }
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }
