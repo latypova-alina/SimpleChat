@@ -4,14 +4,14 @@ import java.net.Socket;
 /**
  * Created by alina on 21.12.16.
  */
-public class ClientA {
+public class Client {
     int port = 3000;
     String host = "localhost";
     Socket socket;
     InputStream is;
     int x;
 
-    public ClientA() throws IOException {
+    public Client() throws IOException {
         socket = new Socket(host, port);
         final Reader from_server=new InputStreamReader(socket.getInputStream());
         PrintWriter to_server = new PrintWriter(socket.getOutputStream());
@@ -50,6 +50,6 @@ public class ClientA {
     }
 
     public static void main(String[] args) throws IOException{
-        ClientA client = new ClientA();
+        Client client = new Client();
     }
 }

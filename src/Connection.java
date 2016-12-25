@@ -9,7 +9,7 @@ import java.util.*;
 class Connection implements Runnable {
     Socket client;
     Thread thread;
-    ServerA server;
+    Server server;
     ArrayList<String> names = new ArrayList<>();
     ArrayList<Connection> connections;
     Map onlines;
@@ -21,7 +21,7 @@ class Connection implements Runnable {
 
 
 
-    public Connection(ServerA server, Socket client, ArrayList<Connection> connections, Map onlines, Map onlinesFrames) throws IOException {
+    public Connection(Server server, Socket client, ArrayList<Connection> connections, Map onlines, Map onlinesFrames) throws IOException {
         this.client = client;
         this.server = server;
         this.connections = connections;
@@ -110,21 +110,14 @@ class Connection implements Runnable {
                 while(inface.hasInput()){
                     line = inface.getCommand();
                     if (line == null) break;
-                //line = in.readLine();
-                //if (line == null) break;
-                /*StringTokenizer t = new StringTokenizer(line);
-                if (!t.hasMoreTokens()) continue;
-                String command = t.nextToken().toLowerCase();
-                String s = inface.getCommand();*/
                     StringTokenizer t = new StringTokenizer(line);
                     if (!t.hasMoreTokens()) continue;
                     String command = t.nextToken().toLowerCase();
                     if (command.equals("имя")) {
                         client_name = t.nextToken();
                         if (!loginExist(client_name)) {
-                        //    out.print("OK\n");
                             inface.changeLabelText("OK");
-                            authorized = true;
+                            inface.authorized();
                             onlines.put(client_name, client);
                             onlinesFrames.put(client_name, inface);
                             names.add(client_name);

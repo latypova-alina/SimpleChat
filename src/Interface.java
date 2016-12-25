@@ -15,52 +15,57 @@ import static javax.swing.JFrame.EXIT_ON_CLOSE;
 public class Interface extends JFrame {
     private AbstractButton start;
     private JLabel label;
+    private JLabel enter_message;
+    private JTextArea online;
+    private JLabel message_from;
+    private JLabel message;
     private JTextField input;
+    private JTextField chatter;
     String user_input;
 
-    public Interface() throws IOException{
-        /*final JFrame frame = new JFrame("Simple Chat Room");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        final JPanel panel = new JPanel(new BorderLayout());
-        label = new JLabel("");
-        input = new JTextArea();
-        start = new JButton("Start chatting");
-        label.setVisible(false);
-        input.setVisible(false);
-        panel.add(label, BorderLayout.NORTH);
-        panel.add(input, BorderLayout.CENTER);
-        panel.add(start, BorderLayout.SOUTH);
-        frame.add(panel);
-        frame.setBounds(100, 100, 400, 200);
-        frame.setVisible(true); */
-    }
     public void start_working(){
         final JFrame frame = new JFrame("Simple Chat Room");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        final JPanel panel = new JPanel(new BorderLayout());
-        label = new JLabel("");
-        input = new JTextField();
-        start = new JButton("Start chatting");
-        label.setVisible(true);
-        input.setVisible(true);
-        panel.add(label, BorderLayout.NORTH);
-        panel.add(input, BorderLayout.CENTER);
-        panel.add(start, BorderLayout.SOUTH);
+        final JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(4, 4, 4, 4));
+        label = new JLabel("Введите ваше имя");
+        input = new JTextField("кому");
+        chatter = new JTextField();
+        message_from = new JLabel("Сообщение от: ");
+        online = new JTextArea("online");
+        enter_message = new JLabel("Введите ваше сообщение");
+        message = new JLabel("");
+
+        panel.add(label);
+        panel.add(enter_message);
+        panel.add(online);
+        panel.add(chatter);
+        panel.add(input);
+        panel.add(message_from);
+        panel.add(message);
+        /*enter_message.setVisible(false);
+        message_from.setVisible(false);
+        message.setVisible(false);
+        chatter.setVisible(false);
+        online.setVisible(false);*/
+
         frame.add(panel);
-        frame.setBounds(100, 100, 400, 200);
+        frame.setBounds(200, 200, 800, 400);
         frame.setVisible(true);
-        /*start.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                label.setVisible(true);
-                input.setVisible(true);
-                //System.out.println("Yey");
 
-            }
-        }); */
+    }
 
+    public void authorized(){
+        enter_message.setVisible(true);
+        message_from.setVisible(true);
+        message.setVisible(true);
+        chatter.setVisible(true);
+        online.setVisible(true);
+        label.setVisible(false);
+    }
 
-
+    public void addName(String name){
+        online.setText(online.getText() + "<html>" + name + "<br></html>" );
     }
     public boolean hasInput(){
         input.addActionListener(new ActionListener() {
@@ -74,8 +79,8 @@ public class Interface extends JFrame {
         else return false;
     }
 
-    public void changeLabelText(String answer){
-        label.setText(answer);
+    public void changeLabelText(String answer) {
+        message.setText(answer);
     }
 
     public String getCommand(){

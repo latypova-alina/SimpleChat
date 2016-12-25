@@ -8,14 +8,14 @@ import java.util.Map;
 /**
  * Created by alina on 21.12.16.
  */
-public class ServerA {
+public class Server {
     final int PORT = 3000;
     ArrayList<Connection> connections;
     Map onlines;
     Map onlinesFrames;
 
 
-    public ServerA() throws IOException{
+    public Server() throws IOException{
         connections = new ArrayList<>();
         onlines = new HashMap();
         onlinesFrames = new HashMap();
@@ -32,6 +32,6 @@ public class ServerA {
         }
     }
     public static void main(String[] args) throws IOException{
-        ServerA server = new ServerA();
+        Server server = new Server();
     }
 }
