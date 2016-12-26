@@ -119,7 +119,7 @@ class Connection implements Runnable {
                     inface.clear();
                    // break;
                 }
-            } else if (client_name != null) /*&& (inface.nameAndInput()))*/ {
+            } else if (client_name != null) {
                 while (inface.nameAndInput()) {
                     String chatter = inface.getChatterName();
                     if (online(chatter)) {
